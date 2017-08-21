@@ -1,0 +1,20 @@
+#!/bin/bash
+
+ROOT=/opt/selenium
+CONF=$ROOT/config.json
+/opt/bin/generate_config > $CONF
+function shutdown {
+    echo "shutting down hub.."
+    kill -s SIGTERM $NODE_PID
+    wait $NODE_PID
+    echo "shutdown complete"
+}
+
+java ${JAVA_OPTS} -jar /opt/selenium/selenium-server-standalone.jar \
+  -role hub \
+  -hubConfig $CONF \
+  ${SE_OPTS} &
+NODE_PID=$!
+
+trap shutdown SIGTERM SIGINT
+wait $NODE_PID

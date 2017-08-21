@@ -1,0 +1,33 @@
+version: '3'
+services:  
+    selenium_hub:
+      image: siliconvalleyclouldit/seleniumhub:latest
+      restart: always
+      environment:
+        - JAVA_OPTS=-Xmx700m
+      expose:
+        - 4444
+      ports:
+        - "4444:4444"
+        
+    chrome:
+      image: siliconvalleyclouldit/seleniumchrome:latest
+      restart: always
+      environment:
+        - CHROME_VERSION="google-chrome-stable"
+        - CHROME_DRIVER_VERSION="2.30"
+        - HUB_PORT_4444_TCP_ADDR=selenium_hub
+        - HUB_PORT_4444_TCP_PORT=4444
+      depends_on:
+        - selenium_hub
+
+    firefox:
+      image: siliconvalleyclouldit/seleniumfirefox:latest
+      restart: always
+      environment:
+        - FIREFOX_VERSION=54.0
+        - GECKODRIVER_VERSION=0.17.0
+        - HUB_PORT_4444_TCP_ADDR=selenium_hub
+        - HUB_PORT_4444_TCP_PORT=4444
+      depends_on:
+        - selenium_hub
